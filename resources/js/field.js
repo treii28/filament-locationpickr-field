@@ -4,6 +4,7 @@ export default function locationPickrField({ location, config }) {
     return {
         map: null,
         marker: null,
+        overlay: null,
         markerLocation: null,
         infoWindow: null,
         loader: null,
@@ -11,22 +12,38 @@ export default function locationPickrField({ location, config }) {
         config: {
             draggable: true,
             clickable: false,
-            defaultZoom: 8,
+            defaultZoom: 12.8,
+            latLngBounds: {
+                north: 45.21,
+                south: 45.11,
+                west: -84.2,
+                east: -84.29,
+            },
             controls: {
                 mapTypeControl: true,
                 scaleControl: true,
-                streetViewControl: true,
-                rotateControl: true,
-                fullscreenControl: true,
-                zoomControl: false,
+                streetViewControl: false,
+                rotateControl: false,
+                fullscreenControl: false,
+                zoomControl: true,
             },
             myLocationButtonLabel: '',
             defaultLocation: {
-                lat: 0,
-                lng: 0,
+                lat: 45.158,
+                lng: -84.245,
             },
             apiKey: '',
             statePath: '',
+            overlayConfig: {
+                overlayUrl: null,
+                overlayBounds: {
+                    north: 45.21,
+                    east: -84.2,
+                    south: 45.11,
+                    west: -84.29
+                },
+                overlayOpacity: 0.25
+            }
         },
 
         init: function () {
@@ -45,6 +62,54 @@ export default function locationPickrField({ location, config }) {
             this.loader
                 .load()
                 .then((google) => {
+                    class GmapOverlay extends google.maps.overlayView {
+                        constructor(bounds, image, opacity) {
+                            super();
+                            this.bounds = bounds;
+                            this.image = image;
+                            this.opacity = opacity;
+                            this.div = null;
+                        }
+
+                        onAdd() {
+                            this.div = document.createElement("div");
+                            this.div.style.borderStyle = "none";
+                            this.div.style.borderWidth = "0px";
+                            this.div.style.position = "absolute";
+                            this.div.style.pointerEvents = "none";
+
+                            const img = document.createElement("img");
+                            img.src = this.image;
+                            for (const [key, value] of Object.entries(window.overlayStyle))
+                                img.style[key] = value
+                            //img.style = window.overlayStyle;
+                            this.div.appendChild(img);
+
+                            const panes = this.getPanes();
+                            panes.overlayLayer.appendChild(this.div);
+                        }
+
+                        draw() {
+                            const overlayProjection = this.getProjection();
+                            const sw = overlayProjection.fromLatLngToDivPixel(this.bounds.getSouthWest());
+                            const ne = overlayProjection.fromLatLngToDivPixel(this.bounds.getNorthEast());
+
+                            if (this.div) {
+                                this.div.style.left = sw.x + "px";
+                                this.div.style.top = ne.y + "px";
+                                this.div.style.width = ne.x - sw.x + "px";
+                                this.div.style.height = sw.y - ne.y + "px";
+                            }
+                        }
+
+                        onRemove() {
+                            if (this.div) {
+                                this.div.parentNode.removeChild(this.div);
+                                delete this.div;
+                            }
+                        }
+                    }
+
                     this.map = new google.maps.Map(this.$refs.map, {
                         center: this.getCoordinates(),
                         zoom: this.config.defaultZoom,
@@ -81,11 +146,48 @@ export default function locationPickrField({ location, config }) {
                     locationButtonDiv.appendChild(this.createLocationButton())
                     this.map.controls[
                         google.maps.ControlPosition.TOP_LEFT
-                    ].push(locationButtonDiv)
+                        ].push(locationButtonDiv)
+
+                    let mapBounds = this.getMapBounds()
+                    if(mapBounds !== null) {
+                        this.map.setOptions({
+                            restriction: {
+                                latLngBounds: mapBounds,
+                                strictBounds: false
+                            }
+                        })
+                    }
+
+                    let overlayConfig = this.getOverlayConfig()
+                    if(overlayConfig !== null) {
+                        this.overlay = new GmapOverlay(overlayConfig.overlayBounds, overlayConfig.overlayUrl, overlayConfig.overlayOpacity)
+                        this.overlay.setMap(this.map);
+                    }
+
                 })
                 .catch((error) => {
                     console.error('Error loading Google Maps API:', error)
                 })
+        },
+
+        getMapBounds: function() {
+            return (this.config.latLngBounds.length > 0) ? this.config.latLngBounds : null;
+        },
+
+        getOverlayConfig: function() {
+            if(this.config.overlayConfig.hasOwnProperty('overlayUrl') && this.config.overlayConfig.overlayUrl !== null) {
+                let overlayCfg = {
+                    overlayUrl: this.config.overlayConfig.overlayUrl
+                }
+
+                if(this.config.overlayConfig.hasOwnProperty('overlayBounds'))
+                    overlayCfg.overlayBounds = this.config.overlayConfig.overlayBounds
+                if(this.config.overlayConfig.hasOwnProperty('overlayOpacity'))
+                    overlayCfg.overlayOpacity = this.config.overlayConfig.overlayOpacity
+
+                return overlayCfg
+            } else
+                return null
         },
 
         createLocationButton: function () {

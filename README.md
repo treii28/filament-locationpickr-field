@@ -1,6 +1,6 @@
 # Filament LocationPickr Field
 
-![](https://banners.beyondco.de/Filament%20LocationPickr%20Field.png?theme=light&packageManager=composer+require&packageName=arbermustafa%2Ffilament-locationpickr-field%3A%22%5E2.0.0%22&pattern=architect&style=style_1&description=Just+a+simple+location+picker+field+for+Filament+Php+using+Google+Maps&md=1&showWatermark=0&fontSize=100px&images=location-marker)
+![](https://banners.beyondco.de/Filament%20LocationPickr%20Field.png?theme=light&packageManager=composer+require&packageName=treii28%2Ffilament-locationpickr-field%3A%22%5E2.0.0%22&pattern=architect&style=style_1&description=Just+a+simple+location+picker+field+for+Filament+Php+using+Google+Maps&md=1&showWatermark=0&fontSize=100px&images=location-marker)
 
 This package provides just a simplified location picker field within [Filament](https://filamentphp.com) using Google Maps based on the excellent work of [Hugh Messenger](https://filamentphp.com/plugins/cheesegrits-google-maps).
 
@@ -9,10 +9,10 @@ This package provides just a simplified location picker field within [Filament](
 You can install the package into a Laravel app that uses [Filament](https://filamentphp.com) via composer::
 
 ```bash
-composer require arbermustafa/filament-locationpickr-field:"^2.0.0"
+composer require treii28/filament-locationpickr-field:"^2.0.0"
 ```
 
-**Filament V2** - if you are using Filament v2.x, you can use [1.x](https://github.com/arbermustafa/filament-locationpickr-field/tree/1.x) branch.
+**Filament V2** - if you are using Filament v2.x, you can use [1.x](https://github.com/treii28/filament-locationpickr-field/tree/1.x) branch.
 
 You can publish the config file with:
 
@@ -101,7 +101,7 @@ public function location(): Attribute
 The form field can be used with no options, by simply adding this to your Filament Form schema:
 
 ```php
-use ArberMustafa\FilamentLocationPickrField\Forms\Components\LocationPickr;
+use Treii28\FilamentLocationPickrField\Forms\Components\LocationPickr;
 ...
 
     ->schema([
@@ -119,7 +119,7 @@ The name used in the `make()` function must be the one you set up as your model'
 The full set of options is as follows. All option methods support closures, as well as direct values.
 
 ```php
-use ArberMustafa\FilamentLocationPickrField\Forms\Components\LocationPickr;
+use Treii28\FilamentLocationPickrField\Forms\Components\LocationPickr;
 ...
 
     ->schema([
@@ -149,7 +149,7 @@ use ArberMustafa\FilamentLocationPickrField\Forms\Components\LocationPickr;
 The infolist entry can be used with no options, by simply adding this to your Filament Infolist schema:
 
 ```php
-use ArberMustafa\FilamentLocationPickrField\Infolists\Components\LocationPickr;
+use Treii28\FilamentLocationPickrField\Infolists\Components\LocationPickr;
 ...
 
     ->schema([
@@ -183,7 +183,7 @@ Install the package in your app's `composer.json`:
 
 ```json
 "require": {
-    "arbermustafa/filament-locationpickr-field": "dev-fix/pickr-field as dev-main",
+    "treii28/filament-locationpickr-field": "dev-fix/pickr-field as dev-main",
 },
 "repositories": [
     {
@@ -201,7 +201,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
--   [Arber Mustafa](https://github.com/arbermustafa)
+-   [Arber Mustafa](https://github.com/treii28)
 -   [Hugh Messenger](https://github.com/cheesegrits)
 -   [All Contributors](../../contributors)
 

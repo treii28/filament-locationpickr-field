@@ -1,6 +1,6 @@
 <?php
 
-namespace ArberMustafa\FilamentLocationPickrField\Forms\Components;
+namespace Treii28\FilamentLocationPickrField\Forms\Components;
 
 use Closure;
 use Exception;
@@ -9,13 +9,13 @@ use JsonException;
 
 class LocationPickr extends Field
 {
-    protected string $view = 'filament-locationpickr-field::forms.components.locationpickr';
+    protected string $view = 'filament.forms.components.locationpickr';
 
     private int $precision = 8;
 
-    protected array | Closure | null $defaultLocation = [0, 0];
+    protected array | Closure | null $defaultLocation = [45.158, -84.245];
 
-    protected int | Closure $defaultZoom = 8;
+    protected float | Closure $defaultZoom = 12.8;
 
     protected bool | Closure $draggable = true;
 
@@ -23,31 +23,49 @@ class LocationPickr extends Field
 
     protected array | Closure $mapControls = [];
 
+    protected array | Closure $latLngBounds = [];
+
     protected string | Closure $height = '400px';
 
     protected string | Closure | null $myLocationButtonLabel = null;
+
+    protected string | Closure | null $overlayUrl = null;
+    protected array | Closure $overlayBounds = [];
+    protected float | Closure | null $overlayOpacity = 0.25;
 
     private array $mapConfig = [
         'draggable' => true,
         'clickable' => false,
         'defaultLocation' => [
-            'lat' => 41.32836109345274,
-            'lng' => 19.818383186960773,
+            'lat' => 45.158,
+            'lng' => -84.245,
         ],
         'controls' => [],
         'statePath' => '',
-        'defaultZoom' => 8,
+        'defaultZoom' => 12.8,
         'myLocationButtonLabel' => '',
         'apiKey' => '',
+    ];
+
+    public array $overlayConfig = [
+        'overlayUrl' => '',
+        //'overlayStyle' => [],
+        'overlayBounds' => [
+            'north' => 45.21,
+            'east' => -84.2,
+            'south' => 45.11,
+            'west' => -84.29,
+        ],
+        'overlayOpacity' => 0.25
     ];
 
     public array $controls = [
         'mapTypeControl' => true,
         'scaleControl' => true,
-        'streetViewControl' => true,
-        'rotateControl' => true,
-        'fullscreenControl' => true,
-        'zoomControl' => false,
+        'streetViewControl' => false,
+        'rotateControl' => false,
+        'fullscreenControl' => false,
+        'zoomControl' => true,
     ];
 
     public function defaultLocation(array | Closure $defaultLocation): static
@@ -75,14 +93,14 @@ class LocationPickr extends Field
         return config('filament-locationpickr-field.default_location');
     }
 
-    public function defaultZoom(int | Closure $defaultZoom): static
+    public function defaultZoom(int | float | Closure $defaultZoom): static
     {
         $this->defaultZoom = $defaultZoom;
 
         return $this;
     }
 
-    public function getDefaultZoom(): int
+    public function getDefaultZoom(): int | float
     {
         $zoom = $this->evaluate($this->defaultZoom);
 
@@ -134,6 +152,23 @@ class LocationPickr extends Field
         return json_encode(array_merge($this->controls, $controls), JSON_THROW_ON_ERROR);
     }
 
+    public function latLngBounds(array | Closure $latLngBounds): static
+    {
+        $this->latLngBounds = $latLngBounds;
+
+        return $this;
+    }
+
+    public function getLatLngBounds(): string | null
+    {
+        if(count($this->latLngBounds) == 0)
+            return null;
+
+        $latLngBounds = $this->evaluate($this->latLngBounds) ?? [];
+
+        return json_encode($latLngBounds);
+    }
+
     public function height(string | Closure $height): static
     {
         $this->height = $height;
@@ -158,24 +193,75 @@ class LocationPickr extends Field
         return $this->evaluate($this->myLocationButtonLabel) ?? config('filament-locationpickr-field.my_location_button');
     }
 
+    public function ovarlayUrl(string| Closure $overlayUrl): static
+    {
+        $this->overlayUrl = $overlayUrl;
+
+        return $this;
+    }
+
+    public function getOverlayUrl(): string | null
+    {
+        return $this->evaluate($this->overlayUrl) ?? null;
+    }
+
+    public function overlayBounds(array | Closure $overlayBounds): static
+    {
+        $this->overlayBounds = $overlayBounds;
+
+        return $this;
+    }
+
+    public function getOverlayBounds(): string
+    {
+        $overlayBounds = $this->evaluate($this->overlayConfig['overlayBounds']) ?? [];
+
+        return json_encode($overlayBounds);
+    }
+
+    public function getOverlayConfig(): string | null
+    {
+        if(empty($this->getOverlayUrl()) || (count($this->getOverlayBounds()) == 0))
+            return null;
+
+        $configArray = [
+            'overlayUrl' => $this->getOverlayUrl(),
+            'overlayBounds' => $this->getOverlayBounds(),
+            'overlayOpacity' => $this->overlayOpacity
+        ];
+
+        return json_encode($this->overlayConfig);
+    }
+
+    public function overlayConfig(array | Closure $overlayConfig): static
+    {
+        $this->overlayConfig = $overlayConfig;
+
+        return $this;
+    }
+
     /**
      * @throws JsonException
      */
     public function getMapConfig(): string
     {
-        return json_encode(
-            array_merge($this->mapConfig, [
-                'draggable' => $this->getDraggable(),
-                'clickable' => $this->getClickable(),
-                'defaultLocation' => $this->getDefaultLocation(),
-                'statePath' => $this->getStatePath(),
-                'controls' => $this->getMapControls(),
-                'defaultZoom' => $this->getDefaultZoom(),
-                'myLocationButtonLabel' => $this->getMyLocationButtonLabel(),
-                'apiKey' => config('filament-locationpickr-field.key'),
-            ]),
-            JSON_THROW_ON_ERROR
-        );
+        $configArray = array_merge($this->mapConfig, [
+            'draggable' => $this->getDraggable(),
+            'clickable' => $this->getClickable(),
+            'defaultLocation' => $this->getDefaultLocation(),
+            'statePath' => $this->getStatePath(),
+            'controls' => $this->getMapControls(),
+            'defaultZoom' => $this->getDefaultZoom(),
+            'myLocationButtonLabel' => $this->getMyLocationButtonLabel(),
+            'apiKey' => config('filament-locationpickr-field.key'),
+        ]);
+
+        if($latLngBounds = $this->getLatLngBounds())
+            $configArray['latLngBounds'] = $latLngBounds;
+        if($overlayConfig = $this->getOverlayConfig())
+            $configArray['overlayConfig'] = $overlayConfig;
+
+        return json_encode($configArray,JSON_THROW_ON_ERROR);
     }
 
     /**

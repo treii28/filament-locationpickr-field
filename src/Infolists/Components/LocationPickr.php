@@ -1,6 +1,6 @@
 <?php
 
-namespace ArberMustafa\FilamentLocationPickrField\Infolists\Components;
+namespace Treii28\FilamentLocationPickrField\Infolists\Components;
 
 use Closure;
 use Filament\Infolists\Components\Entry;
@@ -13,7 +13,7 @@ class LocationPickr extends Entry
 
     protected int | Closure $defaultZoom = 8;
 
-    protected string | Closure $height = '400px';
+    protected string | Closure $height = '500px';
 
     public function defaultLocation(array | Closure $defaultLocation): static
     {

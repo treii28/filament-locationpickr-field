@@ -10,17 +10,17 @@ return [
     'key' => env('GMAP_API', ''),
 
     'default_location' => [
-        'lat' => 41.32836109345274,
-        'lng' => 19.818383186960773,
+        'lat' => 45.158,
+        'lng' => -84.245,
     ],
 
-    'default_zoom' => 8,
+    'default_zoom' => 12.8,
 
     'default_draggable' => true,
 
     'default_clickable' => true,
 
-    'default_height' => '400px',
+    'default_height' => '500px',
 
-    'my_location_button' => 'My location',
+    'my_location_button' => 'CCR',
 ];

@@ -1,8 +1,8 @@
 {
-    "name": "arbermustafa/filament-locationpickr-field",
+    "name": "treii28/filament-locationpickr-field",
     "description": "Location picker field for Filament Php using Google Maps",
     "keywords": [
-        "arbermustafa",
+        "treii28",
         "laravel",
         "filament-plugin",
         "filament-locationpickr-field",
@@ -12,15 +12,15 @@
         "field",
         "php"
     ],
-    "homepage": "https://github.com/arbermustafa/filament-locationpickr-field",
+    "homepage": "https://github.com/treii28/filament-locationpickr-field",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
             "name": "Arber Mustafa",
-            "email": "info@arbermustafa.com",
+            "email": "Treii28@gmail.com",
             "role": "Developer",
-            "homepage": "https://arbermustafa.com"
+            "homepage": "https://wijg.com"
         }
     ],
     "require": {
@@ -33,12 +33,12 @@
     },
     "autoload": {
         "psr-4": {
-            "ArberMustafa\\FilamentLocationPickrField\\": "src"
+            "Treii28\\FilamentLocationPickrField\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "ArberMustafa\\FilamentLocationPickrField\\Tests\\": "tests"
+            "Treii28\\FilamentLocationPickrField\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -56,7 +56,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "ArberMustafa\\FilamentLocationPickrField\\LocationPickrFieldServiceProvider"
+                "Treii28\\FilamentLocationPickrField\\LocationPickrFieldServiceProvider"
             ]
         }
     },
